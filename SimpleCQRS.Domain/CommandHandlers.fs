@@ -7,8 +7,8 @@ open Messages
 open Repository
 
 let handleInventoryItemCommand (storage:EventStore.IEventStore) message =
-    let getId (item:InventoryItem) = item.Id
-    let getUncommittedChanges (item:InventoryItem) = item.Root.GetUncommittedChanges()
+    let getId (item:InventoryItem) = item.Root.Id
+    let getUncommittedChanges (item:InventoryItem) = item.Root.UncommittedChanges
     let convert (event: obj Event) = {EventData = event.EventData :?> InventoryItemEvent; Version = event.Version }
     let apply (item:InventoryItem) =convert >> apply item false
     let f = processItem storage newItem apply getId getUncommittedChanges
