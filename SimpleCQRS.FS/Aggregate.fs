@@ -12,4 +12,4 @@ type 'a Root() =
         and set value = id <- value
     
     member this.ApplyChange isNew event = if isNew then changes.Add event
-    member this.GetUncommittedChanges() = changes |> Seq.map (fun x -> { EventData = x.EventData :> obj; Version = x.Version})
+    member this.GetUncommittedChanges() = changes
