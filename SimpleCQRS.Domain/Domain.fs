@@ -15,21 +15,14 @@ type InventoryItem() =
     member this.Apply isNew (x:InventoryItemEvent Event) =
         this.ApplyChange isNew x
         match x.EventData with
-        | Deactivated id -> 
-            activated <- false
-            this
+        | Deactivated id -> activated <- false
         | Created(id,name) -> 
             this.Id <- id
             activated <- true
-            this
-        | ItemsCheckedIn(_,c) -> 
-            count <- count + c
-            this
-        | ItemsRemoved(_,c) -> 
-            count <- count - c
-            this
-        | _ -> this
-
+        | ItemsCheckedIn(_,c) -> count <- count + c
+        | ItemsRemoved(_,c) -> count <- count - c
+        | _ -> ()
+        this
 
 let create id name =
     let item = InventoryItem()

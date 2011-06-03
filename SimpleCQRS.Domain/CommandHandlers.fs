@@ -8,7 +8,7 @@ open Repository
 
 let handleInventoryItemCommand (storage:EventStore.IEventStore) message =
     let convert (event: obj Event) = {EventData = event.EventData :?> InventoryItemEvent; Version = event.Version }
-    let f = processItem storage (fun (item:InventoryItem) -> convert >> item.Apply false )
+    let f = processItem storage (fun () -> new InventoryItem()) (fun (item:InventoryItem) -> convert >> item.Apply false)
     match message.CommandData with
     | Create(id,name) -> create id name |> save storage -1
     | Deactivate(id,originalVersion)         -> f id deactivate originalVersion
