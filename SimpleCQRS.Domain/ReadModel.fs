@@ -1,15 +1,28 @@
 ﻿module ReadModel
 
 open System
-open DB
+open System.Collections.Generic
 open Events
 open Messages
+
+type InventoryItemDetailsDto = {
+    Id : Guid
+    mutable Name : string
+    mutable CurrentCount : int
+    mutable Version : int }
+
+type InventoryItemListDto = {
+    Id: Guid
+    mutable Name: string }
+
+let Details = new Dictionary<Guid,InventoryItemDetailsDto>()
+let List = new List<InventoryItemListDto>()
 
 type IReadModelFacade =
     abstract GetInventoryItems : unit -> InventoryItemListDto seq
     abstract GetInventoryItemDetails : Guid -> InventoryItemDetailsDto
 
-type  ReadModelFacade() =
+type ReadModelFacade() =
     interface IReadModelFacade with
         member this.GetInventoryItems() = List |> Seq.cache
         member this.GetInventoryItemDetails id = Details.[id]

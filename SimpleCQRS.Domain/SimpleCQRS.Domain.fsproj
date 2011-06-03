@@ -43,7 +43,6 @@
     <Compile Include="Events.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="CommandHandlers.fs" />
-    <Compile Include="DB.fs" />
     <Compile Include="ReadModel.fs" />
     <Compile Include="Bootstrapper.fs" />
   </ItemGroup>
