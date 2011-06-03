@@ -28,6 +28,7 @@ type InventoryItem() =
 let create id name =
     let item = InventoryItem()
     InventoryItemEvent.Created(id,name) |> toEvent |> item.ApplyChange
+    item
 
 let changeName newName (item:InventoryItem) =
     if String.IsNullOrEmpty newName then raise <| new ArgumentException "newName"
