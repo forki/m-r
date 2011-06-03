@@ -11,7 +11,7 @@ type InventoryItem() as this =
     let mutable activated = false
     
     member this.Apply(x:obj Event) =
-      match x.Data with
+      match x.EventData with
       | :? InventoryItemEvent as e -> 
           match e with
           | Deactivated id -> activated <- false

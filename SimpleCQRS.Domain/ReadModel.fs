@@ -16,7 +16,7 @@ type  ReadModelFacade() =
 
 module InventoryListView =
     let handleInventoryItemEvent message = 
-        match message.Data with
+        match message.EventData with
         | Created(id,name)    -> List.Add {Id = id; Name = name}
         | Renamed(id,newName) -> List.Find(fun x -> x.Id = id).Name <- newName
         | Deactivated id      -> List.RemoveAll(fun x -> x.Id = id) |> ignore
@@ -29,7 +29,7 @@ module InventoryItemDetailView =
         | _ -> raise <| new InvalidOperationException "did not find the original inventory this shouldnt happen"
 
     let handleInventoryItemEvent message = 
-        match message.Data with
+        match message.EventData with
         | Created(id,name)         -> Details.Add(id, {Id = id; Name = name; CurrentCount = 0; Version = 0})
         | Renamed(id,newName)      -> 
             let d = GetDetailsItem id

@@ -30,7 +30,7 @@ type EventStore(publish) =
           |> Seq.fold (fun (i,descriptors) event ->
               let newVersion = i + 1
               publish { event with Version = newVersion}
-              newVersion,{Id = aggregateId; Data = event.Data; Version = newVersion}::descriptors)
+              newVersion,{Id = aggregateId; Data = event.EventData; Version = newVersion}::descriptors)
               (expectedVersion,eventDescriptors)
           |> fun (_,descriptors) -> dict.[aggregateId] <- descriptors
 
@@ -38,7 +38,7 @@ type EventStore(publish) =
         match dict.TryGetValue aggregateId with
         | true,descriptors ->
             descriptors
-              |> List.map (fun x -> { Data = x.Data; Version = x.Version} : obj Event)
+              |> List.map (fun x -> { EventData = x.Data; Version = x.Version} : obj Event)
         | _ -> raise <| Exceptions.AggregateNotFoundException() 
 
     interface IEventStore with

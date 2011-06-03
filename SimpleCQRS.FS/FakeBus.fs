@@ -19,7 +19,7 @@ type FakeBus() =
         let key = typeof<'a>
         let action (x:obj) = 
             let genericEvent = x :?> obj Event
-            let event = { Data = genericEvent.Data :?> 'a; Version = genericEvent.Version } : 'a Event
+            let event = { EventData = genericEvent.EventData :?> 'a; Version = genericEvent.Version } : 'a Event
             handler event
 
         match eventRoutes.TryGetValue key with
@@ -41,4 +41,4 @@ type FakeBus() =
                    |> List.iter (fun handler -> handler (event :> obj))  // Greg did this with Threadpool
             | _ -> if key.BaseType <> null then publishAs key.BaseType
 
-        event.Data.GetType() |> publishAs
+        event.EventData.GetType() |> publishAs

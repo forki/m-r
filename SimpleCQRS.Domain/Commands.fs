@@ -3,25 +3,9 @@
 open System
 open Messages
 
-type DeactivateInventoryItem = { 
-    InventoryItemId : Guid
-    OriginalVersion : int }
-
-type CreateInventoryItem = {
-    InventoryItemId : Guid
-    Name : string }
-
-type RenameInventoryItem = {
-    InventoryItemId : Guid
-    NewName : string
-    OriginalVersion : int }
-
-type CheckInItemsToInventory = {
-    InventoryItemId : Guid
-    Count : int;
-    OriginalVersion : int }
-
-type RemoveItemsFromInventory = {
-    InventoryItemId : Guid
-    Count : int
-    OriginalVersion : int }
+type InventoryItemCommand =
+| Create of Guid * string
+| Deactivate of Guid * int
+| Rename of Guid * string * int
+| CheckInItems of Guid * int * int
+| RemoveItems of Guid * int * int

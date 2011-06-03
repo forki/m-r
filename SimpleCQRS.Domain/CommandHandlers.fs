@@ -5,27 +5,24 @@ open Commands
 open Messages
 open Repository
 
-module InventoryCommandHandlers = 
-    let handleCreateInventoryItem (repository:IRepository<InventoryItem>) (message:CreateInventoryItem Command) =    
-        let item = InventoryItem.Create(message.Data.InventoryItemId, message.Data.Name)
+let handleInventoryItemCommand (repository:IRepository<InventoryItem>) message =
+    match message.CommandData with
+    | Create(id,name) -> 
+        let item = InventoryItem.Create(id, name)
         repository.Save(item, -1)
-    
-    let handleDeactivateInventoryItem (repository:IRepository<InventoryItem>) (message:DeactivateInventoryItem Command) =
-        let item = repository.GetById(message.Data.InventoryItemId)
+    | Deactivate(id,originalVersion) -> 
+        let item = repository.GetById id
         item.Deactivate()
-        repository.Save(item, message.Data.OriginalVersion)
-
-    let handleRemoveItemsFromInventory (repository:IRepository<InventoryItem>) (message:RemoveItemsFromInventory Command) =
-        let item = repository.GetById(message.Data.InventoryItemId)
-        item.Remove(message.Data.Count)
-        repository.Save(item, message.Data.OriginalVersion)
-
-    let handleCheckInItemsToInventory (repository:IRepository<InventoryItem>) (message:CheckInItemsToInventory Command) =
-        let item = repository.GetById(message.Data.InventoryItemId)
-        item.CheckIn(message.Data.Count)
-        repository.Save(item, message.Data.OriginalVersion)
-
-    let handleRenameInventoryItem (repository:IRepository<InventoryItem>) (message:RenameInventoryItem Command) =
-        let item = repository.GetById(message.Data.InventoryItemId)
-        item.ChangeName(message.Data.NewName)
-        repository.Save(item, message.Data.OriginalVersion)
+        repository.Save(item, originalVersion)
+    | RemoveItems(id,count,originalVersion) -> 
+        let item = repository.GetById id
+        item.Remove count
+        repository.Save(item, originalVersion)
+    | CheckInItems(id,count,originalVersion) -> 
+        let item = repository.GetById id
+        item.CheckIn count
+        repository.Save(item, originalVersion)
+    | Rename(id,newName,originalVersion) -> 
+        let item = repository.GetById id
+        item.ChangeName newName
+        repository.Save(item, originalVersion)

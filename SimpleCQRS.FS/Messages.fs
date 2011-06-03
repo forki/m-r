@@ -2,13 +2,13 @@
 
 type Message = interface end
 
-type 'a Command = { Data: 'a }
+type 'a Command = { CommandData: 'a }
     with interface Message
 
 type 'a Event = {
-    Data: 'a
+    EventData: 'a
     Version: int }
     with interface Message
 
-let toCommand x = { Data = x } : 'a Command
-let toEvent x = { Data = x :> obj ; Version = 0 } 
+let toCommand x = { CommandData = x } : 'a Command
+let toEvent x = { EventData = x :> obj ; Version = 0 } 
