@@ -7,16 +7,16 @@ open Messages
 
 type InventoryItemDetailsDto = {
     Id : Guid
-    mutable Name : string
-    mutable CurrentCount : int
-    mutable Version : int }
+    Name : string
+    CurrentCount : int
+    Version : int }
 
 type InventoryItemListDto = {
     Id: Guid
-    mutable Name: string }
+    Name: string }
 
 let Details = new Dictionary<Guid,InventoryItemDetailsDto>()
-let List = new List<InventoryItemListDto>()
+let Items = new Dictionary<Guid,InventoryItemListDto>()
 
 type IReadModelFacade =
     abstract GetInventoryItems : unit -> InventoryItemListDto seq
@@ -24,15 +24,15 @@ type IReadModelFacade =
 
 type ReadModelFacade() =
     interface IReadModelFacade with
-        member this.GetInventoryItems() = List |> Seq.cache
+        member this.GetInventoryItems() = Items.Values |> Seq.cache
         member this.GetInventoryItemDetails id = Details.[id]
 
 module InventoryListView =
     let handleInventoryItemEvent message = 
         match message.EventData with
-        | Created(id,name)    -> List.Add {Id = id; Name = name}
-        | Renamed(id,newName) -> List.Find(fun x -> x.Id = id).Name <- newName
-        | Deactivated id      -> List.RemoveAll(fun x -> x.Id = id) |> ignore
+        | Created(id,name)    -> Items.Add(id,{Id = id; Name = name})
+        | Renamed(id,newName) -> Items.[id] <- { Items.[id] with Name = newName }
+        | Deactivated id      -> Items.Remove(id) |> ignore
         | _ -> ()
 
 module InventoryItemDetailView =
@@ -44,16 +44,7 @@ module InventoryItemDetailView =
     let handleInventoryItemEvent message = 
         match message.EventData with
         | Created(id,name)         -> Details.Add(id, {Id = id; Name = name; CurrentCount = 0; Version = 0})
-        | Renamed(id,newName)      -> 
-            let d = GetDetailsItem id
-            d.Name <- newName
-            d.Version <- message.Version
+        | Renamed(id,newName)      -> Details.[id] <- { Details.[id] with Name = newName; Version = message.Version }
         | Deactivated id           -> Details.Remove id |> ignore
-        | ItemsCheckedIn(id,count) ->
-            let d = GetDetailsItem id
-            d.CurrentCount <- d.CurrentCount + count
-            d.Version <- message.Version 
-        | ItemsRemoved(id,count) ->
-            let d = GetDetailsItem id
-            d.CurrentCount <- d.CurrentCount - count
-            d.Version <- message.Version
+        | ItemsCheckedIn(id,count) -> Details.[id] <- { Details.[id] with CurrentCount = Details.[id].CurrentCount + count; Version = message.Version }
+        | ItemsRemoved(id,count)   -> Details.[id] <- { Details.[id] with CurrentCount = Details.[id].CurrentCount + count; Version = message.Version }
