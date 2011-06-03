@@ -11,4 +11,4 @@ type 'a Event = {
     with interface Message
 
 let toCommand x = { CommandData = x } : 'a Command
-let toEvent x = { EventData = x :> obj ; Version = 0 } 
+let toEvent x = { EventData = x; Version = 0 } 

@@ -5,7 +5,7 @@ open Messages
 open Events
 
 type InventoryItem() =
-    inherit Aggregate.Root<obj Messages.Event>()
+    inherit Aggregate.Root<InventoryItemEvent>()
     let mutable activated = false
     let mutable count = 0
     let mutable id = Guid.Empty
@@ -14,26 +14,24 @@ type InventoryItem() =
     member this.Activated = activated
     member this.Id = id
     
-    member this.Apply isNew (x:obj Event) =
+    member this.Apply isNew (x:InventoryItemEvent Event) =
         this.ApplyChange isNew x
         match x.EventData with
-        | :? InventoryItemEvent as e -> 
-            match e with
-            | Deactivated id -> 
-                activated <- false
-                this
-            | Created(newId,name) -> 
-                id <- newId
-                activated <- true
-                this
-            | ItemsCheckedIn(_,c) -> 
-                count <- count + c
-                this
-            | ItemsRemoved(_,c) -> 
-                count <- count - c
-                this
-            | _ -> this
+        | Deactivated id -> 
+            activated <- false
+            this
+        | Created(newId,name) -> 
+            id <- newId
+            activated <- true
+            this
+        | ItemsCheckedIn(_,c) -> 
+            count <- count + c
+            this
+        | ItemsRemoved(_,c) -> 
+            count <- count - c
+            this
         | _ -> this
+
 
 let create id name =
     let item = InventoryItem()
