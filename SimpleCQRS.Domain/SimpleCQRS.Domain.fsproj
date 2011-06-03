@@ -48,11 +48,6 @@
     <Compile Include="Bootstrapper.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimpleCQRS.Dynamic\SimpleCQRS.Dynamic.csproj">
-      <Name>SimpleCQRS.Dynamic</Name>
-      <Project>{89aca05c-d4ca-40c3-be32-870498a8f93d}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\SimpleCQRS.FS\SimpleCQRS.FS.fsproj">
       <Name>SimpleCQRS.FS</Name>
       <Project>{f0e44d17-25b7-4c1a-8fa7-8814de2df547}</Project>

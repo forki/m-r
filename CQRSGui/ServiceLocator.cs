@@ -1,10 +1,7 @@
-﻿using SimpleCQRS;
-
-namespace CQRSGui
+﻿namespace CQRSGui
 {
     public static class ServiceLocator
     {
-        public static FakeBus.FakeBus Bus { get; set; }
-       
+        public static FakeBus.FakeBus Bus { get; set; }       
     }
 }

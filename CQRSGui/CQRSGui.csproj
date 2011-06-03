@@ -115,10 +115,6 @@
       <Project>{E0E01B8C-2C7E-4C1D-9847-C8C2F8A3FEFB}</Project>
       <Name>SimpleCQRS.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SimpleCQRS.Dynamic\SimpleCQRS.Dynamic.csproj">
-      <Project>{89ACA05C-D4CA-40C3-BE32-870498A8F93D}</Project>
-      <Name>SimpleCQRS.Dynamic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SimpleCQRS.FS\SimpleCQRS.FS.fsproj">
       <Project>{F0E44D17-25B7-4C1A-8FA7-8814DE2DF547}</Project>
       <Name>SimpleCQRS.FS</Name>

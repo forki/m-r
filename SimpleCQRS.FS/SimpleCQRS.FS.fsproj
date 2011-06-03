@@ -41,16 +41,10 @@
   <ItemGroup>
     <Compile Include="Exceptions.fs" />
     <Compile Include="Messages.fs" />
+    <Compile Include="Aggregate.fs" />
     <Compile Include="EventStore.fs" />
     <Compile Include="Repository.fs" />
     <Compile Include="FakeBus.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleCQRS.Dynamic\SimpleCQRS.Dynamic.csproj">
-      <Name>SimpleCQRS.Dynamic</Name>
-      <Project>{89aca05c-d4ca-40c3-be32-870498a8f93d}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
