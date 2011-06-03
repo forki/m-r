@@ -7,13 +7,13 @@ namespace CQRSGui.Controllers
     [HandleError]
     public class HomeController : Controller
     {
-        private FakeBus _bus;
-        private ReadModelFacade _readmodel;
+        private FakeBus.FakeBus _bus;
+        private ReadModel.IReadModelFacade _readmodel;
 
         public HomeController()
         {
             _bus = ServiceLocator.Bus;
-            _readmodel = new ReadModelFacade();
+            _readmodel = new ReadModel.ReadModelFacade();
         }
 
         public ActionResult Index()
@@ -37,7 +37,7 @@ namespace CQRSGui.Controllers
         [HttpPost]
         public ActionResult Add(string name)
         {
-            _bus.Send(new CreateInventoryItem(Guid.NewGuid(), name));
+            _bus.Send(Messages.toCommand(new Commands.CreateInventoryItem(Guid.NewGuid(), name)));
 
             return RedirectToAction("Index");
         }
@@ -51,15 +51,14 @@ namespace CQRSGui.Controllers
         [HttpPost]
         public ActionResult ChangeName(Guid id, string name, int version)
         {
-            var command = new RenameInventoryItem(id, name, version);
-            _bus.Send(command);
+            _bus.Send(Messages.toCommand(new Commands.RenameInventoryItem(id, name, version)));
 
             return RedirectToAction("Index");
         }
 
         public ActionResult Deactivate(Guid id, int version)
         {
-            _bus.Send(new DeactivateInventoryItem(id, version));
+            _bus.Send(Messages.toCommand(new Commands.DeactivateInventoryItem(id, version)));
             return RedirectToAction("Index");
         }
 
@@ -72,7 +71,7 @@ namespace CQRSGui.Controllers
         [HttpPost]
         public ActionResult CheckIn(Guid id, int number, int version)
         {
-            _bus.Send(new CheckInItemsToInventory(id, number, version));
+            _bus.Send(Messages.toCommand(new Commands.CheckInItemsToInventory(id, number, version)));
             return RedirectToAction("Index");
         }
 
@@ -85,7 +84,7 @@ namespace CQRSGui.Controllers
         [HttpPost]
         public ActionResult Remove(Guid id, int number, int version)
         {
-            _bus.Send(new RemoveItemsFromInventory(id, number, version));
+            _bus.Send(Messages.toCommand(new Commands.RemoveItemsFromInventory(id, number, version)));
             return RedirectToAction("Index");
         }
     }

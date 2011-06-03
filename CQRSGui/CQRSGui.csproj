@@ -14,6 +14,7 @@
     <AssemblyName>CQRSGui</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -109,9 +111,17 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimpleCQRS\SimpleCQRS.csproj">
-      <Project>{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6}</Project>
-      <Name>SimpleCQRS</Name>
+    <ProjectReference Include="..\SimpleCQRS.Domain\SimpleCQRS.Domain.fsproj">
+      <Project>{E0E01B8C-2C7E-4C1D-9847-C8C2F8A3FEFB}</Project>
+      <Name>SimpleCQRS.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleCQRS.Dynamic\SimpleCQRS.Dynamic.csproj">
+      <Project>{89ACA05C-D4CA-40C3-BE32-870498A8F93D}</Project>
+      <Name>SimpleCQRS.Dynamic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleCQRS.FS\SimpleCQRS.FS.fsproj">
+      <Project>{F0E44D17-25B7-4C1A-8FA7-8814DE2DF547}</Project>
+      <Name>SimpleCQRS.FS</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -129,7 +139,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>52410</DevelopmentServerPort>
+          <DevelopmentServerPort>49188</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

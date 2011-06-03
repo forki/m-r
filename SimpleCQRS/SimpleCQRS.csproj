@@ -57,19 +57,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandHandlers.cs" />
-    <Compile Include="Domain.cs" />
-    <Compile Include="EventStore.cs" />
-    <Compile Include="FakeBus.cs" />
-    <Compile Include="InfrastructureCrap.DontBotherReadingItsNotImportant.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Commands.cs" />
-    <Compile Include="Events.cs" />
-    <Compile Include="Message.cs" />
     <Compile Include="ReadModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +84,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleCQRS.Dynamic\SimpleCQRS.Dynamic.csproj">
+      <Project>{89ACA05C-D4CA-40C3-BE32-870498A8F93D}</Project>
+      <Name>SimpleCQRS.Dynamic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleCQRS.FS\SimpleCQRS.FS.fsproj">
+      <Project>{F0E44D17-25B7-4C1A-8FA7-8814DE2DF547}</Project>
+      <Name>SimpleCQRS.FS</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
