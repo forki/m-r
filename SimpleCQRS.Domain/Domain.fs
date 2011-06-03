@@ -6,20 +6,20 @@ open Events
 
 type InventoryItem() as this =
     inherit Repository.AggregateRoot()
-    let apply x = x |> toEvent |> this.ApplyChange
+    let apply = toEvent >> this.ApplyChange
 
     let mutable activated = false
     
     member this.Apply(x:obj Event) =
-      match x.EventData with
-      | :? InventoryItemEvent as e -> 
-          match e with
-          | Deactivated id -> activated <- false
-          | Created(id,name) -> 
-              this.Id <- id
-              activated <- true
-          | _ -> ()
-      | _ -> ()
+        match x.EventData with
+        | :? InventoryItemEvent as e -> 
+            match e with
+            | Deactivated id -> activated <- false
+            | Created(id,name) -> 
+                this.Id <- id
+                activated <- true
+            | _ -> ()
+        | _ -> ()
 
     member this.ChangeName newName =
         if String.IsNullOrEmpty newName then raise <| new ArgumentException "newName"
