@@ -4,43 +4,38 @@ open System
 open Messages
 open Events
 
-type InventoryItem() =
-    inherit Aggregate.Root<InventoryItemEvent>()
-    let mutable activated = false
-    let mutable count = 0
+type InventoryItem = {
+    Root: Aggregate.Root<InventoryItemEvent>
+    Id: Guid
+    Activated: bool
+    Count : int }    
 
-    member this.Count = count
-    member this.Activated = activated
-    
-    member this.Apply isNew (x:InventoryItemEvent Event) =
-        this.ApplyChange isNew x
-        match x.EventData with
-        | Deactivated id -> activated <- false
-        | Created(id,name) -> 
-            this.Id <- id
-            activated <- true
-        | ItemsCheckedIn(_,c) -> count <- count + c
-        | ItemsRemoved(_,c) -> count <- count - c
-        | _ -> ()
-        this
+let newItem() = {Root = new Aggregate.Root<InventoryItemEvent>(); Id = Guid.Empty; Activated = false; Count = 0}
+let apply (item:InventoryItem) isNew event =
+    item.Root.ApplyChange isNew event
+    match event.EventData with
+    | Deactivated id          -> {item with Activated = false }
+    | Created(id,name)        -> {item with Id = id; Activated = true }
+    | ItemsCheckedIn(_,count) -> {item with Count = item.Count + count }
+    | ItemsRemoved(_,count)   -> {item with Count = item.Count - count }
+    | _ -> item
 
 let create id name =
-    let item = InventoryItem()
-    InventoryItemEvent.Created(id,name) |> toEvent |> item.Apply true
+    InventoryItemEvent.Created(id,name) |> toEvent |> apply (newItem()) true
 
 let changeName newName (item:InventoryItem) =
     if String.IsNullOrEmpty newName then raise <| new ArgumentException "newName"
-    InventoryItemEvent.Renamed(item.Id,newName) |> toEvent |> item.Apply true
+    InventoryItemEvent.Renamed(item.Id,newName) |> toEvent |> apply item true
 
 let remove count (item:InventoryItem) =
     if count <= 0 then raise <| new InvalidOperationException "can't remove negative count from inventory"
     if item.Count < count then raise <| new InvalidOperationException "can't remove item, since the inventory would go below zero"
-    InventoryItemEvent.ItemsRemoved(item.Id,count) |> toEvent |> item.Apply true
+    InventoryItemEvent.ItemsRemoved(item.Id,count) |> toEvent |> apply item true
 
 let checkIn count (item:InventoryItem) =
     if count <= 0 then raise <| new InvalidOperationException "must have a count greater than 0 to add to inventory"
-    InventoryItemEvent.ItemsCheckedIn(item.Id,count) |> toEvent |> item.Apply true
+    InventoryItemEvent.ItemsCheckedIn(item.Id,count) |> toEvent |> apply item true
 
 let deactivate (item:InventoryItem) =
     if not item.Activated then raise <| new InvalidOperationException "already deactivated"
-    InventoryItemEvent.Deactivated item.Id |> toEvent |> item.Apply true
+    InventoryItemEvent.Deactivated item.Id |> toEvent |> apply item true
