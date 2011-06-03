@@ -31,11 +31,7 @@ namespace CQRSGui
 
             RegisterRoutes(RouteTable.Routes);
 
-            var bus = Bootstrapper.createServiceBus();
-
-
-    ServiceLocator.Bus = bus;
-
+            ServiceLocator.Bus = Bootstrapper.createServiceBus();
         }
     }
 }
