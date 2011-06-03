@@ -1,18 +1,11 @@
 ﻿module Bootstrapper
 
-open FakeBus
-open EventStore
-open Repository
-open CommandHandlers
-
-
 let createServiceBus() =
-    let bus = new FakeBus()
+    let bus = new FakeBus.FakeBus()
+    let storage = new EventStore.EventStore(bus.Publish)
+    let repo = new Repository.Repository<Domain.InventoryItem>(storage)
 
-    let storage = new EventStore(bus.Publish)
-    let rep = new Repository<Domain.InventoryItem>(storage)
-
-    bus.RegisterCommandHandler (CommandHandlers.handleInventoryItemCommand rep)
+    bus.RegisterCommandHandler (CommandHandlers.handleInventoryItemCommand repo)
     
     bus.RegisterEventHandler ReadModel.InventoryListView.handleInventoryItemEvent
     bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleInventoryItemEvent
