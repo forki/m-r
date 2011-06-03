@@ -34,9 +34,11 @@ type FakeBus() =
         | _ -> failwith "no handler registered"
 
     member this.Publish (event:obj Event) =
-        let key = event.Data.GetType()
-        match eventRoutes.TryGetValue key with
-        | true,handlers ->
-            handlers 
-               |> List.iter (fun handler -> handler (event :> obj))  // Greg did this with Threadpool
-        | _ -> ()
+        let rec publishAs key =                                                
+            match eventRoutes.TryGetValue key with
+            | true,handlers ->
+                handlers 
+                   |> List.iter (fun handler -> handler (event :> obj))  // Greg did this with Threadpool
+            | _ -> if key.BaseType <> null then publishAs key.BaseType
+
+        event.Data.GetType() |> publishAs

@@ -18,14 +18,7 @@ let createServiceBus() =
     bus.RegisterCommandHandler (InventoryCommandHandlers.handleRemoveItemsFromInventory rep)
     bus.RegisterCommandHandler (InventoryCommandHandlers.handleRenameInventoryItem rep)
 
-    bus.RegisterEventHandler ReadModel.InventoryListView.handleInventoryItemCreated
-    bus.RegisterEventHandler ReadModel.InventoryListView.handleInventoryItemRenamed
-    bus.RegisterEventHandler ReadModel.InventoryListView.handleInventoryItemDeactivated
-
-    bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleInventoryItemDeactivated
-    bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleInventoryItemCreated
-    bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleInventoryItemRenamed
-    bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleItemsCheckedInToInventory
-    bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleItemsRemovedFromInventory
+    bus.RegisterEventHandler ReadModel.InventoryListView.handleInventoryItemEvent
+    bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleInventoryItemEvent
 
     bus

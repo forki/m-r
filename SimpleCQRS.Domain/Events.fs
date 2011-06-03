@@ -3,21 +3,9 @@
 open System
 open Messages
 
-type InventoryItemDeactivated = { 
-    Id : Guid }
-
-type InventoryItemCreated = { 
-    Id : Guid 
-    Name : string }
-
-type InventoryItemRenamed = { 
-    Id : Guid 
-    NewName : string }
-
-type ItemsCheckedInToInventory = { 
-    Id : Guid 
-    Count : int }
-
-type ItemsRemovedFromInventory = { 
-    Id : Guid 
-    Count : int }
+type InventoryItemEvent =
+| Created of Guid * string
+| Deactivated of Guid
+| Renamed of Guid * string
+| ItemsCheckedIn of Guid * int
+| ItemsRemoved of Guid * int
