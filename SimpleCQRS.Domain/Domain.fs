@@ -8,11 +8,9 @@ type InventoryItem() =
     inherit Aggregate.Root<InventoryItemEvent>()
     let mutable activated = false
     let mutable count = 0
-    let mutable id = Guid.Empty
 
     member this.Count = count
     member this.Activated = activated
-    member this.Id = id
     
     member this.Apply isNew (x:InventoryItemEvent Event) =
         this.ApplyChange isNew x
@@ -20,8 +18,8 @@ type InventoryItem() =
         | Deactivated id -> 
             activated <- false
             this
-        | Created(newId,name) -> 
-            id <- newId
+        | Created(id,name) -> 
+            this.Id <- id
             activated <- true
             this
         | ItemsCheckedIn(_,c) -> 
