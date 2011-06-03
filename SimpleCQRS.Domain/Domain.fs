@@ -7,7 +7,9 @@ open Events
 type InventoryItem() =
     inherit Repository.AggregateRoot()
     let mutable activated = false
+    let mutable count = 0
 
+    member this.Count = count
     member this.Activated = activated
     
     member this.Apply(x:obj Event) =
@@ -18,6 +20,8 @@ type InventoryItem() =
             | Created(id,name) -> 
                 this.Id <- id
                 activated <- true
+            | ItemsCheckedIn(_,c) -> count <- count + c
+            | ItemsRemoved(_,c) -> count <- count - c
             | _ -> ()
         | _ -> ()
 
@@ -30,7 +34,8 @@ let changeName newName (item:InventoryItem) =
     InventoryItemEvent.Renamed(item.Id,newName) |> toEvent |> item.ApplyChange
 
 let remove count (item:InventoryItem) =
-    if count <= 0 then raise <| new InvalidOperationException "cant remove negative count from inventory"
+    if count <= 0 then raise <| new InvalidOperationException "can't remove negative count from inventory"
+    if item.Count < count then raise <| new InvalidOperationException "can't remove item, since the inventory would go below zero"
     InventoryItemEvent.ItemsRemoved(item.Id,count) |> toEvent |> item.ApplyChange
 
 let checkIn count (item:InventoryItem) =
