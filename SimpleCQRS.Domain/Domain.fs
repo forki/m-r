@@ -4,11 +4,11 @@ open System
 open Messages
 open Events
 
-type InventoryItem() as this =
+type InventoryItem() =
     inherit Repository.AggregateRoot()
-    let apply = toEvent >> this.ApplyChange
-
     let mutable activated = false
+
+    member this.Activated = activated
     
     member this.Apply(x:obj Event) =
         match x.EventData with
@@ -21,26 +21,22 @@ type InventoryItem() as this =
             | _ -> ()
         | _ -> ()
 
-    member this.ChangeName newName =
-        if String.IsNullOrEmpty newName then raise <| new ArgumentException "newName"
-        InventoryItemEvent.Renamed(this.Id,newName) |> apply
+let create id name =
+    let item = InventoryItem()
+    InventoryItemEvent.Created(id,name) |> toEvent |> item.ApplyChange
 
-    member this.Remove count =
-        if count <= 0 then raise <| new InvalidOperationException "cant remove negative count from inventory"
-        InventoryItemEvent.ItemsRemoved(this.Id,count) |> apply
+let changeName newName (item:InventoryItem) =
+    if String.IsNullOrEmpty newName then raise <| new ArgumentException "newName"
+    InventoryItemEvent.Renamed(item.Id,newName) |> toEvent |> item.ApplyChange
 
-    member this.CheckIn count =
-        if count <= 0 then raise <| new InvalidOperationException "must have a count greater than 0 to add to inventory"
-        InventoryItemEvent.ItemsCheckedIn(this.Id,count) |> apply
+let remove count (item:InventoryItem) =
+    if count <= 0 then raise <| new InvalidOperationException "cant remove negative count from inventory"
+    InventoryItemEvent.ItemsRemoved(item.Id,count) |> toEvent |> item.ApplyChange
 
-    member this.Deactivate() =
-        if not activated then raise <| new InvalidOperationException "already deactivated"
-        InventoryItemEvent.Deactivated this.Id |> apply
+let checkIn count (item:InventoryItem) =
+    if count <= 0 then raise <| new InvalidOperationException "must have a count greater than 0 to add to inventory"
+    InventoryItemEvent.ItemsCheckedIn(item.Id,count) |> toEvent |> item.ApplyChange
 
-    static member Create(id,name) =
-        let this = InventoryItem()
-        InventoryItemEvent.Created(id,name)
-          |> toEvent
-          |> this.ApplyChange
-
-        this
+let deactivate (item:InventoryItem) =
+    if not item.Activated then raise <| new InvalidOperationException "already deactivated"
+    InventoryItemEvent.Deactivated item.Id |> toEvent |> item.ApplyChange

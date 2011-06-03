@@ -24,9 +24,10 @@ namespace SimpleCQRS.Dynamic
             foreach (var e in history) ApplyChange(e, false);
         }
 
-        public void ApplyChange(T @event)
+        public AggregateRoot<T> ApplyChange(T @event)
         {
             ApplyChange(@event, true);
+            return this;
         }
 
         private void ApplyChange(T @event, bool isNew)

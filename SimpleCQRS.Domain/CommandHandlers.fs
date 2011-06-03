@@ -8,21 +8,21 @@ open Repository
 let handleInventoryItemCommand (repository:IRepository<InventoryItem>) message =
     match message.CommandData with
     | Create(id,name) -> 
-        let item = InventoryItem.Create(id, name)
-        repository.Save(item, -1)
+        create id name
+          |> repository.Save -1
     | Deactivate(id,originalVersion) -> 
-        let item = repository.GetById id
-        item.Deactivate()
-        repository.Save(item, originalVersion)
+        repository.GetById id
+          |> deactivate
+          |> repository.Save originalVersion
     | RemoveItems(id,count,originalVersion) -> 
-        let item = repository.GetById id
-        item.Remove count
-        repository.Save(item, originalVersion)
+        repository.GetById id
+          |> remove count
+          |> repository.Save originalVersion
     | CheckInItems(id,count,originalVersion) -> 
-        let item = repository.GetById id
-        item.CheckIn count
-        repository.Save(item, originalVersion)
+        repository.GetById id
+          |> checkIn count
+          |> repository.Save originalVersion
     | Rename(id,newName,originalVersion) -> 
-        let item = repository.GetById id
-        item.ChangeName newName
-        repository.Save(item, originalVersion)
+        repository.GetById id
+          |> changeName newName
+          |> repository.Save originalVersion
