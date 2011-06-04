@@ -7,9 +7,10 @@ open Events
 type InventoryItem = {
     Root: Aggregate.Root<InventoryItemEvent>
     Activated: bool
-    Count : int }    
+    Count : int }  
+    with member this.get_AggregateRoot() =  this.Root  // Todo: Remove this
 
-let newItem() = {Root = Aggregate.NewRoot(); Activated = false; Count = 0}
+let newItem() = { Root = Aggregate.NewRoot(); Activated = false; Count = 0}
 
 let apply (item:InventoryItem) isNew event =
     let root = item.Root.ApplyChange isNew event
