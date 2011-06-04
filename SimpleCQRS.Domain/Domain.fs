@@ -9,7 +9,7 @@ type InventoryItem = {
     Activated: bool
     Count : int }    
 
-let newItem() = {Root = {Id = Guid.Empty; UncommittedChanges = [] }; Activated = false; Count = 0}
+let newItem() = {Root = Aggregate.NewRoot(); Activated = false; Count = 0}
 
 let apply (item:InventoryItem) isNew event =
     let root = item.Root.ApplyChange isNew event
