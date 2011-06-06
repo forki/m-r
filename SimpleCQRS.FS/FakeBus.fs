@@ -15,7 +15,7 @@ type FakeBus() =
         | true,handlers -> commandRoutes.[key] <- (handler :> obj)::handlers
         | _ -> commandRoutes.Add(key,[handler])
 
-    member this.RegisterEventHandler (handler:'a Event-> unit) =
+    member this.RegisterEventHandler (handler:'a Event -> unit) =
         let key = typeof<'a>
         let action (x:obj) = 
             let genericEvent = x :?> obj Event
@@ -33,12 +33,11 @@ type FakeBus() =
         | true,handler::handlers -> failwith "cannot send to more than one handler"
         | _ -> failwith "no handler registered"
 
-    member this.Publish (event:obj Event) =
+    member this.Publish event =
+        let casted = event :> obj
         let rec publishVia key =                                                
             match eventRoutes.TryGetValue key with
-            | true,handlers ->
-                handlers 
-                   |> List.iter (fun handler -> handler (event :> obj))  // Greg did this with Threadpool
+            | true,handlers -> handlers |> List.iter (fun handler -> handler casted)  // Greg did this with Threadpool
             | _ -> if key.BaseType <> null then publishVia key.BaseType
 
         event.EventData.GetType() |> publishVia
