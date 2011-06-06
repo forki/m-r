@@ -7,8 +7,8 @@ open Messages
 open Repository
 
 let handleInventoryItemCommand (storage:EventStore.IEventStore) message =
-    let convert (event: obj Event) = {EventData = event.EventData :?> InventoryItemEvent; Version = event.Version }
-    let apply (item:InventoryItem) =convert >> apply item false
+
+    let apply (item:InventoryItem) = apply item false
     let f = processItem storage newItem apply
 
     match message.CommandData with

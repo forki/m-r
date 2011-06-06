@@ -11,6 +11,7 @@ let inline save (storage:EventStore.IEventStore) expectedVersion item =
 
 let inline getById (storage:EventStore.IEventStore) init apply id =
     storage.GetEventsForAggregate id
+      |> Seq.map upcastEvent
       |> Seq.fold apply (init())
 
 let inline processItem storage init apply id processF originalVersion =
