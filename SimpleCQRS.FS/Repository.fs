@@ -5,7 +5,7 @@ open System.Collections.Generic
 open Messages
 
 let inline save (storage:EventStore.IEventStore) expectedVersion item =
-    let root = (^a : (member AggregateRoot :  Aggregate.Root<_>) item)    
+    let root = (^a : (member GetAggregateRoot :  unit -> Aggregate.Root<_>) item)    
     let uncommitedChanges = root.UncommittedChanges |> Seq.map (fun x -> { EventData = x.EventData :> obj; Version = x.Version})
     storage.SaveEvents(root.Id, uncommitedChanges, expectedVersion)
 

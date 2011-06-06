@@ -9,5 +9,4 @@ type 'a Root = {
     with
         member this.ApplyChange isNew event = 
           if isNew then {this with UncommittedChanges = event :: this.UncommittedChanges} else this
-
-let NewRoot() = {Id = Guid.Empty; UncommittedChanges = [] }
+        static member New() = {Id = Guid.Empty; UncommittedChanges = [] }
