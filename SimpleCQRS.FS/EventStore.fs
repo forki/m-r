@@ -5,11 +5,14 @@ open System.Collections.Generic
 open Messages
 
 type IEventStore =
-    abstract SaveEvents : Guid * obj Event seq * int -> unit
+    abstract SaveEvents : Guid -> obj Event seq -> int -> unit
     abstract GetEventsForAggregate: Guid -> obj Event list
 
 let performSideEffect f seq = Seq.map (fun x -> f x; x) seq
 let concat list x = x :: list
+
+let inline upcastEvent (event: obj Event) = {EventData = event.EventData :?> 'a; Version = event.Version }
+let inline downcastEvent (event: 'a Event) = { EventData = event.EventData :> obj; Version = event.Version}
     
 type EventStore(publish) =
     let dict = new Dictionary<_,_>()
@@ -32,11 +35,9 @@ type EventStore(publish) =
 
     let getEventsForAggregate aggregateId =
         match dict.TryGetValue aggregateId with
-        | true,descriptors ->
-            descriptors
-              |> List.map downcastEvent
+        | true,events -> List.map downcastEvent events
         | _ -> raise <| Exceptions.AggregateNotFoundException() 
 
     interface IEventStore with
-      member this.SaveEvents(aggregateId,events,expectedVersion) = saveEvents aggregateId events expectedVersion
+      member this.SaveEvents aggregateId events expectedVersion = saveEvents aggregateId events expectedVersion
       member this.GetEventsForAggregate aggregateId = getEventsForAggregate aggregateId
