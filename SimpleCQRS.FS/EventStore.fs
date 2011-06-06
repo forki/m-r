@@ -7,6 +7,9 @@ open Messages
 type IEventStore =
     abstract SaveEvents : Guid * obj Event seq * int -> unit
     abstract GetEventsForAggregate: Guid -> obj Event list
+
+let performSideEffect f seq = Seq.map (fun x -> f x; x) seq
+let concat list x = x :: list
     
 type EventStore(publish) =
     let dict = new Dictionary<_,_>()
@@ -22,13 +25,10 @@ type EventStore(publish) =
             | _ -> []
 
         events
-          |> Seq.fold (fun (i,processedEvents) event ->
-              let newVersion = i + 1
-              let newEvent = { event with Version = newVersion}
-              publish newEvent
-              newVersion,newEvent::processedEvents)
-              (expectedVersion,oldEvents)
-          |> fun (_,descriptors) -> dict.[aggregateId] <- descriptors
+          |> Seq.mapi (fun i event -> { event with Version = expectedVersion + i + 1})
+          |> performSideEffect publish
+          |> Seq.fold concat oldEvents
+          |> fun events -> dict.[aggregateId] <- events
 
     let getEventsForAggregate aggregateId =
         match dict.TryGetValue aggregateId with
