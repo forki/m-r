@@ -15,8 +15,8 @@ type InventoryItemListDto = {
     Id: Guid
     Name: string }
 
-let Details = new Dictionary<Guid,InventoryItemDetailsDto>()
-let Items = new Dictionary<Guid,InventoryItemListDto>()
+let Details = new Dictionary<_,_>()
+let Items = new Dictionary<_,_>()
 
 type IReadModelFacade =
     abstract GetInventoryItems : unit -> InventoryItemListDto seq
