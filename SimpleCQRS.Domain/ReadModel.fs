@@ -47,4 +47,4 @@ module InventoryItemDetailView =
         | Renamed(id,newName)      -> Details.[id] <- { Details.[id] with Name = newName; Version = message.Version }
         | Deactivated id           -> Details.Remove id |> ignore
         | ItemsCheckedIn(id,count) -> Details.[id] <- { Details.[id] with CurrentCount = Details.[id].CurrentCount + count; Version = message.Version }
-        | ItemsRemoved(id,count)   -> Details.[id] <- { Details.[id] with CurrentCount = Details.[id].CurrentCount + count; Version = message.Version }
+        | ItemsRemoved(id,count)   -> Details.[id] <- { Details.[id] with CurrentCount = Details.[id].CurrentCount - count; Version = message.Version }
