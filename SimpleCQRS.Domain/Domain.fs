@@ -13,7 +13,7 @@ type InventoryItem = {
 
 let newItem() = { Root = Root<_>.New(); Activated = false; Count = 0}
 
-let apply (item:InventoryItem) isNew event =
+let apply isNew (item:InventoryItem) event =
     let root = item.Root.ApplyChange isNew event
     match event.EventData with
     | Deactivated id          -> {item with Root = root; Activated = false }
@@ -23,21 +23,21 @@ let apply (item:InventoryItem) isNew event =
     | _ -> item
 
 let create id name =
-    InventoryItemEvent.Created(id,name) |> toEvent |> apply (newItem()) true
+    InventoryItemEvent.Created(id,name) |> toEvent |> apply true (newItem())
 
 let changeName newName (item:InventoryItem) =
     if String.IsNullOrEmpty newName then raise <| new ArgumentException "newName"
-    InventoryItemEvent.Renamed(item.Root.Id,newName) |> toEvent |> apply item true
+    InventoryItemEvent.Renamed(item.Root.Id,newName) |> toEvent |> apply true item
 
 let remove count (item:InventoryItem) =
     if count <= 0 then raise <| new InvalidOperationException "can't remove negative count from inventory"
     if item.Count < count then raise <| new InvalidOperationException "can't remove item, since the inventory would go below zero"
-    InventoryItemEvent.ItemsRemoved(item.Root.Id,count) |> toEvent |> apply item true
+    InventoryItemEvent.ItemsRemoved(item.Root.Id,count) |> toEvent |> apply true item
 
 let checkIn count (item:InventoryItem) =
     if count <= 0 then raise <| new InvalidOperationException "must have a count greater than 0 to add to inventory"
-    InventoryItemEvent.ItemsCheckedIn(item.Root.Id,count) |> toEvent |> apply item true
+    InventoryItemEvent.ItemsCheckedIn(item.Root.Id,count) |> toEvent |> apply true item
 
 let deactivate (item:InventoryItem) =
     if not item.Activated then raise <| new InvalidOperationException "already deactivated"
-    InventoryItemEvent.Deactivated item.Root.Id |> toEvent |> apply item true
+    InventoryItemEvent.Deactivated item.Root.Id |> toEvent |> apply true item

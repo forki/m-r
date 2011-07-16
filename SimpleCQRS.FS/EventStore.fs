@@ -5,42 +5,39 @@ open System.Collections.Generic
 open Messages
 
 type IEventStore =
-    abstract SaveEvents : Guid * obj Event seq * int -> unit
+    abstract SaveEvents : Guid -> obj Event seq -> int -> unit
     abstract GetEventsForAggregate: Guid -> obj Event list
 
-type EventDescriptor = {
-    Id : Guid
-    Data : obj
-    Version : int }
+let performSideEffect f seq = Seq.map (fun x -> f x; x) seq
+let concat list x = x :: list
+
+let inline upcastEvent (event: obj Event) = {EventData = event.EventData :?> 'a; Version = event.Version }
+let inline downcastEvent (event: 'a Event) = { EventData = event.EventData :> obj; Version = event.Version}
     
 type EventStore(publish) =
     let dict = new Dictionary<_,_>()
 
     let saveEvents (aggregateId:Guid) (events: obj Event seq) expectedVersion =
-        let eventDescriptors =
+        let oldEvents =
             match dict.TryGetValue aggregateId with
-            | true,(descriptor::rest as all) ->
-                if descriptor.Version <> expectedVersion && expectedVersion <> -1 then
+            | true,(latestEvent::rest as all) ->
+                if latestEvent.Version <> expectedVersion && expectedVersion <> -1 then
                     raise <| Exceptions.ConcurrencyException()
                 else 
                     all
             | _ -> []
 
         events
-          |> Seq.fold (fun (i,descriptors) event ->
-              let newVersion = i + 1
-              publish { event with Version = newVersion}
-              newVersion,{Id = aggregateId; Data = event.EventData; Version = newVersion}::descriptors)
-              (expectedVersion,eventDescriptors)
-          |> fun (_,descriptors) -> dict.[aggregateId] <- descriptors
+          |> Seq.mapi (fun i event -> { event with Version = expectedVersion + i + 1})
+          |> performSideEffect publish
+          |> Seq.fold concat oldEvents
+          |> fun events -> dict.[aggregateId] <- events
 
     let getEventsForAggregate aggregateId =
         match dict.TryGetValue aggregateId with
-        | true,descriptors ->
-            descriptors
-              |> List.map (fun x -> { EventData = x.Data; Version = x.Version} : obj Event)
+        | true,events -> List.map downcastEvent events
         | _ -> raise <| Exceptions.AggregateNotFoundException() 
 
     interface IEventStore with
-      member this.SaveEvents(aggregateId,events,expectedVersion) = saveEvents aggregateId events expectedVersion
+      member this.SaveEvents aggregateId events expectedVersion = saveEvents aggregateId events expectedVersion
       member this.GetEventsForAggregate aggregateId = getEventsForAggregate aggregateId

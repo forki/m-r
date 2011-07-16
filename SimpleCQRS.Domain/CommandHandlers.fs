@@ -7,13 +7,11 @@ open Messages
 open Repository
 
 let handleInventoryItemCommand (storage:EventStore.IEventStore) message =
-    let convert (event: obj Event) = {EventData = event.EventData :?> InventoryItemEvent; Version = event.Version }
-    let apply (item:InventoryItem) =convert >> apply item false
-    let f = processItem storage newItem apply
+    let processItem = processItem storage newItem (apply false)
 
     match message.CommandData with
     | Create(id,name) -> create id name |> save storage -1
-    | Deactivate(id,originalVersion)         -> f id deactivate originalVersion
-    | RemoveItems(id,count,originalVersion)  -> f id (remove count) originalVersion
-    | CheckInItems(id,count,originalVersion) -> f id (checkIn count) originalVersion
-    | Rename(id,newName,originalVersion)     -> f id (changeName newName) originalVersion
+    | Deactivate(id,originalVersion)         -> processItem id deactivate originalVersion
+    | RemoveItems(id,count,originalVersion)  -> processItem id (remove count) originalVersion
+    | CheckInItems(id,count,originalVersion) -> processItem id (checkIn count) originalVersion
+    | Rename(id,newName,originalVersion)     -> processItem id (changeName newName) originalVersion
