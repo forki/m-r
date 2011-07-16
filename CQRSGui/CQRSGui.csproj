@@ -80,6 +80,7 @@
     <Content Include="Views\Home\ChangeName.aspx" />
     <Content Include="Views\Home\CheckIn.aspx" />
     <Content Include="Views\Home\Details.aspx" />
+    <Content Include="Views\Home\Ledgers.aspx" />
     <Content Include="Views\Home\Remove.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

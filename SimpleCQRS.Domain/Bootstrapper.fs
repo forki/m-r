@@ -8,5 +8,6 @@ let createServiceBus() =
     
     bus.RegisterEventHandler ReadModel.InventoryListView.handleInventoryItemEvent
     bus.RegisterEventHandler ReadModel.InventoryItemDetailView.handleInventoryItemEvent
+    bus.RegisterEventHandler ReadModel.InventoryItemLedgersView.handleInventoryItemEvent
 
     bus

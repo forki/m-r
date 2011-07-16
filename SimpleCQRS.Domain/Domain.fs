@@ -9,9 +9,9 @@ type InventoryItem = {
     Root: Root<InventoryItemEvent>
     Activated: bool
     Count : int }  
-    with member this.GetAggregateRoot() =  this.Root  // Todo: Remove this
-
-let newItem() = { Root = Root<_>.New(); Activated = false; Count = 0}
+    with 
+        member this.GetAggregateRoot() =  this.Root  // Todo: Remove this
+        static member New() = { Root = Root<_>.New(); Activated = false; Count = 0}
 
 let apply isNew (item:InventoryItem) event =
     let root = item.Root.ApplyChange isNew event
@@ -23,7 +23,7 @@ let apply isNew (item:InventoryItem) event =
     | _ -> item
 
 let create id name =
-    InventoryItemEvent.Created(id,name) |> toEvent |> apply true (newItem())
+    InventoryItemEvent.Created(id,name) |> toEvent |> apply true (InventoryItem.New())
 
 let changeName newName (item:InventoryItem) =
     if String.IsNullOrEmpty newName then raise <| new ArgumentException "newName"

@@ -28,6 +28,12 @@ namespace CQRSGui.Controllers
             return View();
         }
 
+        public ActionResult Ledgers(Guid id)
+        {
+            ViewData.Model = _readmodel.GetInventoryItemLedgers(id);
+            return View();
+        }
+
         public ActionResult Add()
         {
             return View();
