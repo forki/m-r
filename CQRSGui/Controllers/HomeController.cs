@@ -7,30 +7,28 @@ namespace CQRSGui.Controllers
     public class HomeController : Controller
     {
         private FakeBus.FakeBus _bus;
-        private ReadModel.IReadModelFacade _readmodel;
 
         public HomeController()
         {
             _bus = ServiceLocator.Bus;
-            _readmodel = new ReadModel.ReadModelFacade();
         }
 
         public ActionResult Index()
         {
-            ViewData.Model = _readmodel.GetInventoryItems();
+            ViewData.Model = ReadModel.GetInventoryItems();
 
             return View();
         }
 
         public ActionResult Details(Guid id)
         {
-            ViewData.Model = _readmodel.GetInventoryItemDetails(id);
+            ViewData.Model = ReadModel.GetInventoryItemDetails(id);
             return View();
         }
 
         public ActionResult Ledgers(Guid id)
         {
-            ViewData.Model = _readmodel.GetInventoryItemLedgers(id);
+            ViewData.Model = ReadModel.GetInventoryItemLedgers(id);
             return View();
         }
 
@@ -49,7 +47,7 @@ namespace CQRSGui.Controllers
 
         public ActionResult ChangeName(Guid id)
         {
-            ViewData.Model = _readmodel.GetInventoryItemDetails(id);
+            ViewData.Model = ReadModel.GetInventoryItemDetails(id);
             return View();
         }
 
@@ -69,7 +67,7 @@ namespace CQRSGui.Controllers
 
         public ActionResult CheckIn(Guid id)
         {
-            ViewData.Model = _readmodel.GetInventoryItemDetails(id);
+            ViewData.Model = ReadModel.GetInventoryItemDetails(id);
             return View();
         }
 
@@ -82,7 +80,7 @@ namespace CQRSGui.Controllers
 
         public ActionResult Remove(Guid id)
         {
-            ViewData.Model = _readmodel.GetInventoryItemDetails(id);
+            ViewData.Model = ReadModel.GetInventoryItemDetails(id);
             return View();
         }
 

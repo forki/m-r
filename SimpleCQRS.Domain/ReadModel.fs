@@ -23,16 +23,9 @@ let Details = new Dictionary<_,_>()
 let Ledgers = new Dictionary<_,_>()
 let Items = new Dictionary<_,_>()
 
-type IReadModelFacade =
-    abstract GetInventoryItems : unit -> InventoryItemListDto seq
-    abstract GetInventoryItemDetails : Guid -> InventoryItemDetailsDto
-    abstract GetInventoryItemLedgers : Guid -> InventoryItemLedgersDto list
-
-type ReadModelFacade() =
-    interface IReadModelFacade with
-        member this.GetInventoryItems() = Items.Values |> Seq.cache
-        member this.GetInventoryItemDetails id = Details.[id]
-        member this.GetInventoryItemLedgers id = Ledgers.[id]
+let GetInventoryItems() = Items.Values |> Seq.cache
+let GetInventoryItemDetails id = Details.[id]
+let GetInventoryItemLedgers id = Ledgers.[id]
 
 module InventoryListView =
     let handleInventoryItemEvent message = 
